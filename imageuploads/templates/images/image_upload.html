@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load url from future %}
+{% load i18n crispy_forms_tags %}
+
+{% block title %}{% trans "Add/Change Image" %}{% endblock %}
+
+{% block content %}
+    <h1>{% trans "Add/Change Image" %}</h1>
+    <p><a href="{% url "image_list" %}">{% trans "Back to images" %}</a></p>
+    {% crispy form %}
+{% endblock %}

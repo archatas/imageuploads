@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load url from future %}
+{% load i18n %}
+
+{% block title %}{% trans "Images" %}{% endblock %}
+
+{% block content %}
+    <h1>{% trans "Images" %}</h1>
+    <p>
+        {% for image_obj in image_list %}
+            <a href="{% url "change_image" image_id=image_obj.pk %}">
+                <img alt="{{ image_obj.title }}" src="{{ image_obj.image.url }}" />
+            </a>
+        {% endfor %}
+    </p>
+    <p><a href="{% url "add_image" %}">{% trans "Add image" %}</a></p>
+{% endblock %}

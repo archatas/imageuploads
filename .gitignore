@@ -1,4 +1,6 @@
 *.log
 *.pot
 *.pyc
-local_settings.py
+imageuploads/local_settings.py
+imageuploads/media/
+imageuploads/static/
