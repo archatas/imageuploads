@@ -7,9 +7,9 @@
 {% block content %}
     <h1>{% trans "Images" %}</h1>
     <p>
-        {% for image_obj in image_list %}
-            <a href="{% url "change_image" image_id=image_obj.pk %}">
-                <img alt="{{ image_obj.title }}" src="{{ image_obj.image.url }}" />
+        {% for instance in images %}
+            <a href="{% url "change_image" image_id=instance.pk %}">
+                <img alt="{{ instance.title }}" src="{{ MEDIA_URL }}{{ instance.image.name }}" />
             </a>
         {% endfor %}
     </p>

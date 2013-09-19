@@ -2,10 +2,102 @@
 {% load url from future %}
 {% load i18n crispy_forms_tags %}
 
-{% block title %}{% trans "Add/Change Image" %}{% endblock %}
+{% block title %}
+    {% if instance %}
+        {% trans "Change Image" %}
+    {% else %}
+        {% trans "Add Image" %}
+    {% endif %}
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}ajaxuploader/css/fileuploader.css" />
+{% endblock %}
 
 {% block content %}
-    <h1>{% trans "Add/Change Image" %}</h1>
+    <h1>
+        {% if instance %}
+            {% trans "Change Image" %}
+        {% else %}
+            {% trans "Add Image" %}
+        {% endif %}
+    </h1>
     <p><a href="{% url "image_list" %}">{% trans "Back to images" %}</a></p>
     {% crispy form %}
+{% endblock %}
+
+{% block js %}
+    <script src="{{ STATIC_URL }}ajaxuploader/js/fileuploader.js"></script>
+    <script>
+        var translatable_file_uploader_options = {
+            template: '<div class="qq-upload-drop-area"><span>{% trans "Drop image here" %}</span></div>' +
+                '<div class="qq-uploader">' +
+                '<div class="qq-upload-button btn btn-inverse"><span class="glyphicon glyphicon-upload"></span>  {% trans "Upload Image" %}</div>' +
+                '&nbsp;<button class="btn btn-danger qq-delete-button"><span class="glyphicon glyphicon-trash"></span> {% trans "Delete" %}</button>' +
+                '<ul class="qq-upload-list"></ul>' +
+            '</div>',
+            // template for one item in file list
+            fileTemplate: '<li>' +
+                '<span class="qq-upload-file"></span>' +
+                '<span class="qq-upload-spinner"></span>' +
+                '<span class="qq-upload-size"></span>' +
+                '<a class="qq-upload-cancel" href="#">{% trans "Cancel" %}</a>' +
+                '<span class="qq-upload-failed-text">{% trans "Failed" %}</span>' +
+            '</li>',
+            messages: {
+                typeError: '{% trans "{file} has invalid extension. Only {extensions} are allowed." %}',
+                sizeError: '{% trans "{file} is too large, maximum file size is {sizeLimit}." %}',
+                minSizeError: '{% trans "{file} is too small, minimum file size is {minSizeLimit}." %}',
+                emptyError: '{% trans "{file} is empty, please select files again without it." %}',
+                filesLimitError: '{% trans "No more than {filesLimit} files are allowed to be uploaded." %}',
+                onLeave: '{% trans "The files are being uploaded, if you leave now the upload will be cancelled." %}'
+            }
+        };
+
+        $(function() {
+            var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+            var $image_upload_widget = $('#image_upload_widget');
+            var current_image_path = $('#id_image_path').val();
+            if (current_image_path) {
+                $('.preview', $image_upload_widget).html('<img src="{{ MEDIA_URL }}' + current_image_path  + '" alt="" />');
+            }
+            var options = $.extend(translatable_file_uploader_options, {
+                allowedExtensions: ['jpg', 'jpeg', 'gif', 'png'],
+                action: '{% url "ajax_uploader" %}',
+                element: $('.uploader', $image_upload_widget)[0],
+                multiple: false,
+                onComplete: function(id, fileName, responseJSON) {
+                    if(responseJSON.success) {
+                        $('.messages', $image_upload_widget).html("");
+                        // set the original to media_file_path
+                        $('#id_image_path').val('uploads/' + fileName);
+                        // show preview link
+                        $('.preview', $image_upload_widget).html('<img src="{{ MEDIA_URL }}uploads/' + fileName  + '" alt="" />');
+                    }
+                },
+                onAllComplete: function(uploads) {
+                    // uploads is an array of maps
+                    // the maps look like this: {file: FileObject, response: JSONServerResponse}
+                    $('.qq-upload-success').fadeOut("slow", function() {
+                        $(this).remove();
+                    });
+                },
+                params: {
+                    'csrf_token': csrfmiddlewaretoken,
+                    'csrf_name': 'csrfmiddlewaretoken',
+                    'csrf_xname': 'X-CSRFToken'
+                },
+                showMessage: function(message) {
+                    $('.messages', $image_upload_widget).html('<div class="alert alert-danger">' + message + '</div>');
+                }
+            });
+            var uploader = new qq.FileUploader(options);
+            $('.qq-delete-button', $image_upload_widget).click(function() {
+                $('.preview', $image_upload_widget).html("");
+                $('#id_delete_image').val(1);
+                return false;
+            });
+
+        });
+    </script>
 {% endblock %}
