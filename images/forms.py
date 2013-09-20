@@ -34,7 +34,7 @@ class ImageForm(forms.ModelForm):
         self.helper.layout = layout.Layout(
             layout.Fieldset(
                 _("Image form"),
-                layout.Field("title", css_class="form-control"),
+                "title",
                 layout.HTML(u"""{% load i18n %}
                     <div id="image_upload_widget">
                         <div class="preview">

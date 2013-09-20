@@ -143,7 +143,7 @@ LOGGING = {
     }
 }
 
-CRISPY_TEMPLATE_PACK = 'bootstrap'
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 try:
     execfile(os.path.join(os.path.dirname(__file__), "local_settings.py"))

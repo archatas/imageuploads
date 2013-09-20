@@ -32,7 +32,7 @@
         var translatable_file_uploader_options = {
             template: '<div class="qq-upload-drop-area"><span>{% trans "Drop image here" %}</span></div>' +
                 '<div class="qq-uploader">' +
-                '<div class="qq-upload-button btn btn-inverse"><span class="glyphicon glyphicon-upload"></span>  {% trans "Upload Image" %}</div>' +
+                '<div class="qq-upload-button btn"><span class="glyphicon glyphicon-upload"></span>  {% trans "Upload Image" %}</div>' +
                 '&nbsp;<button class="btn btn-danger qq-delete-button"><span class="glyphicon glyphicon-trash"></span> {% trans "Delete" %}</button>' +
                 '<ul class="qq-upload-list"></ul>' +
             '</div>',
@@ -93,6 +93,7 @@
             });
             var uploader = new qq.FileUploader(options);
             $('.qq-delete-button', $image_upload_widget).click(function() {
+                $('.messages', $image_upload_widget).html("");
                 $('.preview', $image_upload_widget).html("");
                 $('#id_delete_image').val(1);
                 return false;
